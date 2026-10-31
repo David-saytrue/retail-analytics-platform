@@ -121,8 +121,10 @@ versions. This is not an optimized million-row pipeline. Abrupt termination can
 leave a running audit entry. Stale-run detection, scheduling, deletion handling,
 schema migrations and concurrent-run tests remain future work.
 
-The CI workflow is prepared locally but has not been published: the current
-GitHub CLI authorization lacks the workflow scope. Automatic CI is not enabled.
+The [CI workflow](.github/workflows/ci.yml) runs unit tests and the end-to-end
+PostgreSQL scenario on push and pull request. It also supports manual runs.
+See [GitHub Actions](https://github.com/David-saytrue/retail-analytics-platform/actions)
+for the latest execution status.
 
 ## Learning path
 

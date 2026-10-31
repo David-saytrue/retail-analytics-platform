@@ -34,11 +34,14 @@ smoke-test observations, not a load benchmark or an SLA.
 ## Not verified
 
 - Docker image build/runtime: Docker Desktop engine was not running.
-- GitHub Actions: the workflow exists locally but has not been published because
-  the current CLI authorization lacks workflow scope.
 - Power BI Desktop: no PBIX has been built; measures have not been evaluated by
   the DAX engine.
 - Concurrent execution and abrupt process termination: dedicated tests remain
   future work; publication uses an advisory transaction lock.
 
 Documentation was subsequently translated to English; pipeline behavior was unchanged.
+
+## CI publication
+
+The GitHub CLI workflow scope was subsequently granted and the workflow was
+prepared for publication. Live results are available in the repository Actions tab.
