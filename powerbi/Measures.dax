@@ -1,0 +1,25 @@
+// Table name after import: Movements. Currency: GEL.
+// Add each definition as a separate measure in Power BI Desktop.
+Gross Sales = SUM(Movements[revenue])
+
+Refunds = SUM(Movements[refunds])
+
+Net Revenue = [Gross Sales] - [Refunds]
+
+Net COGS = SUM(Movements[cogs])
+
+Gross Profit = [Net Revenue] - [Net COGS]
+
+Gross Margin = DIVIDE([Gross Profit], [Net Revenue])
+
+Orders =
+CALCULATE(DISTINCTCOUNT(Movements[order_id]), Movements[sold_units] > 0)
+
+Average Order Value = DIVIDE([Gross Sales], [Orders])
+
+Sold Units = SUM(Movements[sold_units])
+
+Returned Units = SUM(Movements[returned_units])
+
+// Ratio of flows in the selected period; NOT a sales-cohort return rate.
+Period Return Unit Ratio = DIVIDE([Returned Units], [Sold Units])

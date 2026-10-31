@@ -1,0 +1,32 @@
+name: retail-analytics
+services:
+  db:
+    image: postgres:17-bookworm
+    environment:
+      POSTGRES_USER: retail
+      POSTGRES_PASSWORD: ${RETAIL_DB_PASSWORD:?Set RETAIL_DB_PASSWORD for the local demo}
+      POSTGRES_DB: retail
+    ports:
+      - "127.0.0.1:55432:5432"
+    volumes:
+      - retail-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U retail -d retail"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+  app:
+    build: .
+    environment:
+      PGHOST: db
+      PGPORT: 5432
+      PGDATABASE: retail
+      PGUSER: retail
+      PGPASSWORD: ${RETAIL_DB_PASSWORD:?Set RETAIL_DB_PASSWORD for the local demo}
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./data:/app/data
+volumes:
+  retail-db:

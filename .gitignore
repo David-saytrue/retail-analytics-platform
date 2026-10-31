@@ -1,0 +1,9 @@
+.test-pg/
+__pycache__/
+data/generated/
+*.log
+.env
+.env.*
+*.pem
+*.key
+artifacts/
