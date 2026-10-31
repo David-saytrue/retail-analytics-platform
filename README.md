@@ -1,18 +1,16 @@
 # Retail Analytics Platform
 
-Учебный проект для портфолио Data Engineering / BI. Все данные синтетические.
-Задача: ежедневно загружать продажи и возвраты и получать проверяемую прибыль.
+An end-to-end Data Engineering / BI portfolio project using synthetic retail data.
+Python ingests sales and returns into PostgreSQL; SQL builds a warehouse and
+validated financial marts. Power BI measure sources are included; a finished
+PBIX report and Airflow scheduling are not implemented yet.
 
-Рабочая первая версия: генератор → Python → PostgreSQL raw → SQL-модель →
-финансовые витрины. Исходники DAX и подключение Power BI — в `powerbi/`.
-Готового PBIX и Airflow в этой версии нет.
+## Quick start: Docker and PowerShell
 
-## Быстрый запуск через Docker (PowerShell)
-
-Из этой папки, при запущенном Docker Desktop:
+Run from this directory with Docker Desktop running:
 
 ```powershell
-$env:RETAIL_DB_PASSWORD = Read-Host 'Пароль для новой локальной учебной БД'
+$env:RETAIL_DB_PASSWORD = Read-Host 'Password for the new local demo database'
 docker compose up -d --wait db
 docker compose run --rm app generate
 docker compose run --rm app load --batch data/generated/day1.json --costs data/generated/costs.csv
@@ -25,16 +23,15 @@ docker compose run --rm app load --batch data/generated/day3-correction.json
 docker compose run --rm app report
 ```
 
-Первый `run` собирает образ; нужны доступ к Docker Hub и Debian packages.
-`POSTGRES_PASSWORD` задаётся при первой инициализации тома: последующее
-изменение переменной само по себе не меняет пароль существующей БД.
-Для остановки без удаления данных: `docker compose stop`.
+The first app run builds the image and needs Docker Hub and Debian package access.
+The password initializes a new database volume; changing the variable later does
+not change an existing database password. Stop without removing data using
+`docker compose stop`.
 
-## Без Docker: Python 3.10+ и PostgreSQL 17+
+## Native setup: Python 3.10+ and PostgreSQL 17+
 
-Нужна **отдельная пустая учебная база**, созданная для этого проекта.
-Не используй betlive_prep, imdb_course или чужую рабочую БД.
-Пример подключения; подставь порт, имя БД и пользователя своего сервера:
+Use a dedicated database created for this project, never an existing learning or
+production database. No Python packages are required. Adjust connection settings:
 
 ```powershell
 $env:PSQL = 'C:\Program Files\PostgreSQL\17\bin\psql.exe'
@@ -50,101 +47,92 @@ python retail.py report
 python retail.py check
 ```
 
-Python-пакеты устанавливать не нужно. Можно использовать `.pgpass` /
-`pgpass.conf` вместо PGPASSWORD. Скрипт использует PG*-переменные и никогда
-не передаёт пароль в командной строке. Таблицы создаются автоматически.
+Alternatively use pgpass.conf. Credentials are inherited through PG* environment
+variables, never passed as command-line arguments. Application schemas are
+created automatically.
 
-## Демо с понятными числами
+## Demo and expected results
 
-- День 1: два заказа, три позиции, выручка 260 GEL, себестоимость 152,
-  валовая прибыль 108. Заказ №1 содержит две позиции — AOV = 260 / 2 = 130.
-- День 2: возвращена одна клавиатура. Исходная цена после скидки — 90,
-  исходная себестоимость — 60. Чистая выручка за весь период = 170,
-  чистая себестоимость = 92, прибыль = 78.
-- Повтор дня 2: `new_versions=0`, финансовые итоги остаются прежними.
-- День 3: цена мыши исправлена с 50 до 70. Итоги = 190 выручки и 98 прибыли.
-  Повтор старого дня 1 не отменяет исправление.
+- Day 1: two orders, three lines, revenue 260 GEL, COGS 152, gross profit 108.
+  Order 1 has two lines. Average order value is 260 / 2 = 130.
+- Day 2: one keyboard is returned. Its discounted price was 90 and cost was 60.
+  All-period net revenue becomes 170, net COGS 92, gross profit 78.
+- Repeating day 2 inserts zero new versions and leaves financial results unchanged.
+- Day 3 corrects the mouse price from 50 to 70. Net revenue becomes 190 and
+  gross profit 98. Replaying the older day 1 cannot undo the correction.
 
-Для большего набора: `python retail.py generate --extra-orders 10000`.
-Seed по умолчанию 42; одинаковые аргументы дают одинаковые файлы.
-Не смешивай изменённый seed с уже загруженными данными: одинаковый ключ и
-updated_at при другом содержимом намеренно вызывают ошибку версии.
+Generate a larger dataset with `python retail.py generate --extra-orders 10000`.
+The default seed is 42. Do not load a different seed into the same database:
+conflicting payloads with identical business keys and timestamps are rejected.
 
-## Как устроена загрузка
+## Ingestion and reliability
 
-1. `retail.py` проверяет формат, обязательные поля и денежные значения.
-2. `ops.runs` сохраняет попытку загрузки.
-3. В одной транзакции: блокировка публикации, новые версии в `raw.events`,
-   обновление модели, проверки, отметка success и COMMIT.
-4. Ошибка приводит к ROLLBACK; предыдущие опубликованные данные остаются.
-   Статус failed записывается отдельно. Некорректный JSON отклоняется ещё
-   до подключения к БД и не создаёт запись ops.runs.
+Python validates input fields, dates and decimal money strings. Each database
+attempt is recorded in ops.runs. A single transaction serializes publication,
+accepts raw versions, refreshes the model, runs quality checks and marks success.
+Failure rolls back raw and model changes; failed status is recorded separately.
+Malformed input is rejected before connecting and has no database run entry.
 
-Raw хранит версии успешно принятых записей, исходный JSON, время поступления
-и run_id. Ключ версии: entity + id + updated_at. Повтор версии пропускается;
-другое содержимое с тем же timestamp отклоняется. staging.latest выбирает
-самую новую версию по времени источника, а не по порядку поступления.
-Пакеты могут содержать только изменения; поздние события не отбрасываются
-по глобальному watermark. Отсутствие записи в пакете не означает удаление.
+Raw stores accepted source versions, JSON payloads, ingestion timestamps and run
+IDs. The version key is entity + record ID + source updated_at. Exact duplicates
+are skipped; different payloads with the same version key fail. staging.latest
+selects the newest source timestamp rather than the latest arrival.
 
-## Модель и бизнес-правила
+Batches can contain only changed records. Late events are not filtered by a
+global watermark. Missing records do not imply deletion.
 
-- `dwh.fact_sales`: одна строка = позиция заказа, PK line_id.
-- `dwh.fact_returns`: одна строка = возврат части позиции, PK return_id.
-- Общие справочники: dim_customer, dim_product, dim_date.
-- `product_cost`: стоимость товара с effective_from. Для продажи выбирается
-  последняя стоимость, действовавшая на sale_date. Нет стоимости — ошибка,
-  а не подстановка нуля. Будущая стоимость не меняет прошлую прибыль.
-- Все цены в GEL, NUMERIC с двумя знаками; налог, доставка, отмены заказов
-  и валютная конвертация пока исключены из бизнес-модели.
-- discount — скидка **на всю позицию**, не на единицу.
-- Возврат означает полный пропорциональный возврат денег и возврат товара
-  в пригодный запас. Непригодные товары требуют отдельного правила списания.
-- Частичные возвраты распределяют копейки накопительно по date, return_id:
-  сумма полного возврата точно равна исходной выручке позиции.
-- Справочники используют Type 1: переименование товара меняет его подпись
-  в прошлых отчётах. Исторические названия требуют отдельного SCD2-этапа.
-- `mart.sales_line` агрегирует возвраты до JOIN; продажи не размножаются.
-- `mart.movements` относит продажу на sale_date, возврат на return_date.
-  `mart.daily_finance` агрегирует движения по дню.
-- `mart.freshness` разделяет время успешной загрузки и timestamp источника.
+## Model and business rules
 
-## Проверки и ограничения
+- fact_sales grain: one order line; fact_returns grain: one return event.
+- Shared dimensions: customer, product and date. Customer/product attributes use
+  Type 1 updates; historical attribute labels would require an SCD2 extension.
+- product_cost contains effective dates. Sales use the most recent cost effective
+  on the sale date. Missing historical costs fail; future costs do not rewrite
+  past profit. Correcting a historical cost intentionally restates affected sales.
+- Currency: GEL; amounts use NUMERIC with two decimals. Tax, shipping, cancellations
+  and currency conversion are outside the first version.
+- Discount is the total line discount, not a per-unit discount.
+- Returns refund the proportional discounted sale price and restore usable stock
+  at the original cost. Damaged inventory requires a separate write-off rule.
+- Cumulative allocation preserves cents across multiple partial returns.
+- mart.sales_line aggregates returns before joining, preserving sales grain.
+- mart.movements recognizes sales on sale dates and refunds on return dates.
+  mart.daily_finance aggregates those movements by day.
+- mart.freshness separates successful load time from the latest source timestamp.
 
-Результаты выполненных локальных проверок: [docs/validation.md](docs/validation.md).
+## Verification and current limitations
+
+See [recorded validation results](docs/validation.md).
 
 ```powershell
 python -m unittest discover -s tests -v
-# Только для отдельной пустой тестовой базы:
+# Only against a dedicated EMPTY test database:
 $env:RETAIL_TEST_DB = '1'
 python tests/integration.py
 ```
 
-Интеграционный тест отказывается работать с существующими схемами проекта;
-для следующего запуска нужна новая пустая БД. Тест сам не удаляет данные.
-Он проверяет повторные загрузки, исправления, старые пакеты, несколько
-возвратов, историческую себестоимость, округление и атомарный откат.
-SQL дополнительно проверяет ссылки, ограничения количеств, сверку строк,
-сумм и согласованность клиента/даты внутри заказа.
+Integration tests reject existing application schemas and never reset databases.
+Use a fresh test database for each run. Coverage includes retries, corrections,
+old batches, partial returns, historical costs, rounding and atomic rollback.
+SQL validates references, quantities, source reconciliation and order consistency.
 
-Входящие пакеты загружаются инкрементально; SQL-модель пока пересчитывается
-по всем последним версиям. Это сознательный первый этап, не оптимизированный
-pipeline для миллионов строк. При аварийном завершении процесса запись
-running может остаться; автоматическое обнаружение зависших запусков,
-расписание, удаление записей и миграции схемы — следующие этапы.
+Raw ingestion is incremental; the SQL model currently refreshes from all latest
+versions. This is not an optimized million-row pipeline. Abrupt termination can
+leave a running audit entry. Stale-run detection, scheduling, deletion handling,
+schema migrations and concurrent-run tests remain future work.
 
-Workflow `.github/workflows/ci.yml` подготовлен локально, но пока не опубликован:
-текущей GitHub-авторизации не хватает разрешения `workflow`.
-Автоматический CI ещё не включён; тесты запускаются локально командами выше.
+The CI workflow is prepared locally but has not been published: the current
+GitHub CLI authorization lacks the workflow scope. Automatic CI is not enabled.
 
-## Учебный маршрут
+## Learning path
 
-1. Прочитай `docs/lesson-01.md`, запусти три дня и объясни каждый итог.
-2. Открой SQL в DBeaver: raw.events → staging.latest → dwh → mart.
-3. Собери отчёт по `powerbi/README.md` и проверь его числа против SQL.
-4. После этого: Airflow, мониторинг, масштабирование и видео демо.
+1. Read [Lesson 1](docs/lesson-01.md), run the demo and explain each result.
+2. Inspect raw.events, staging.latest, dwh tables and mart views in DBeaver.
+3. Build the report following [Power BI setup](powerbi/README.md), reconciling it
+   against the SQL results.
+4. Extend with Airflow, monitoring, scaling and a short demo video.
 
-Официальные материалы: [psql](https://www.postgresql.org/docs/17/app-psql.html),
+Official references: [psql](https://www.postgresql.org/docs/17/app-psql.html),
 [ON CONFLICT](https://www.postgresql.org/docs/17/sql-insert.html),
-[JSON в PostgreSQL](https://www.postgresql.org/docs/17/functions-json.html),
-[готовность сервисов Compose](https://docs.docker.com/compose/how-tos/startup-order/).
+[PostgreSQL JSON](https://www.postgresql.org/docs/17/functions-json.html),
+[Compose startup order](https://docs.docker.com/compose/how-tos/startup-order/).

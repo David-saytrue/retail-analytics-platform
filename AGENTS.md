@@ -1,5 +1,8 @@
 # Retail analytics platform
 
+- All project files and GitHub publication text must be in English, regardless
+  of the conversation language. Review language before committing or pushing.
+
 - Synthetic data only. Do not use personal data or credentials from other projects.
 - Python 3.10+, standard library, PostgreSQL 17+. `psql` is the database client.
 - Run `python -m unittest discover -s tests -v` for unit tests.

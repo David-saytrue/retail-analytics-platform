@@ -1,34 +1,32 @@
-# Подключение Power BI Desktop
+# Power BI Desktop setup
 
-Это исходники мер и инструкция; готового `.pbix` пока нет.
+This folder contains measure sources and setup instructions, not a finished PBIX.
 
-1. Get data → PostgreSQL database. Для Docker: server `127.0.0.1:55432`,
-   database `retail`. Пользователь `retail`, пароль — заданный тобой
-   `RETAIL_DB_PASSWORD`. Используй Import. Не сохраняй пароль в Git.
-2. Загрузи `mart.movements` как **Movements**, а `dwh.dim_product`,
-   `dwh.dim_customer`, `dwh.dim_date` как **Products**, **Customers**, **Dates**.
-   Дополнительно загрузи `mart.freshness` как **Freshness**.
-3. Связи 1:* с одиночной фильтрацией от справочников к Movements:
-   Products.product_id → product_id, Customers.customer_id → customer_id,
-   Dates.date_id → event_date. Отметь Dates как таблицу дат.
-   Freshness остаётся без связей; её дата — отдельная карточка свежести.
-4. Добавь меры из `Measures.dax` по одной. Денежным мерам задай GEL,
-   Gross Margin и Period Return Unit Ratio — проценты.
-5. Страница Overview: карточки Net Revenue, Gross Profit, Orders, Average
-   Order Value; линия Net Revenue по Dates.date_id; столбцы Gross Profit
-   по Products.category; таблица товаров с выручкой, возвратами и прибылью.
-   Срезы: дата, город, категория. Карточка Freshness.last_successful_load.
-6. После загрузки второго дня обнови данные: для минимального демо
-   Net Revenue за весь период = 170, Gross Profit = 78; за 2 января
-   Net Revenue = -90. После исправления третьего дня: 190 и 98 за весь период.
+1. Get data > PostgreSQL database. Docker server: 127.0.0.1:55432; database:
+   retail; user: retail; password: your RETAIL_DB_PASSWORD. Use Import mode.
+   Never commit credentials.
+2. Import mart.movements as Movements, dwh.dim_product as Products,
+   dwh.dim_customer as Customers, dwh.dim_date as Dates and mart.freshness
+   as Freshness.
+3. Create single-direction 1:* relationships from dimensions to Movements:
+   Products.product_id to product_id, Customers.customer_id to customer_id,
+   Dates.date_id to event_date. Mark Dates as the date table. Leave Freshness
+   disconnected; display its last_successful_load in a separate card.
+4. Add each measure in Measures.dax separately. Format money as GEL and ratios
+   as percentages.
+5. Overview page: Net Revenue, Gross Profit, Orders and Average Order Value cards;
+   Net Revenue trend by Dates.date_id; Gross Profit by Products.category;
+   a product table with sales, refunds and profit. Add date, city and category
+   slicers and the freshness card.
+6. Refresh after day 2: all-period Net Revenue = 170, Gross Profit = 78.
+   January 2 Net Revenue = -90. After day 3: all-period totals are 190 and 98.
 
-Возврат уменьшает финансовый результат в день возврата. AOV считается как
-выручка продаж / число заказов с продажами в выбранном контексте; возвраты
-не входят в числитель. Число заказов нельзя суммировать между категориями:
-один заказ может содержать товары из нескольких категорий.
+Refunds affect finances on the return date. Average Order Value is gross sales
+revenue divided by orders with sales in the current filter context. Refunds do
+not enter its numerator. Order counts are not additive across categories because
+one order may include several categories.
 
-В узком периоде доля возвращённых единиц может быть >100%: возвраты могут
-относиться к продажам прошлого периода. Для отдельной когортной страницы
-используй mart.sales_line с фильтром по sale_date и вернувшиеся единицы
-по исходной продаже. Не соединяй сырые возвраты с продажами в Power Query:
-это размножит строки при нескольких возвратах на одну позицию.
+Period Return Unit Ratio compares flows in the selected period and can exceed
+100% when returns relate to earlier sales. A cohort report should instead use
+mart.sales_line filtered by sale_date. Never join individual returns directly to
+sales in Power Query: multiple returns would multiply sales rows.

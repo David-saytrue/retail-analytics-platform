@@ -1,21 +1,15 @@
-# Урок 1. Почему отчёту можно доверять
+# Lesson 1: Why the report is trustworthy
 
-Представь магазин. Вчера он продал две клавиатуры по 100 GEL со скидкой
-20 GEL на всю позицию. Выручка позиции: 2 × 100 − 20 = 180.
-Себестоимость одной клавиатуры 60: прибыль позиции = 180 − 120 = 60.
+A shop sells two keyboards at 100 GEL each with a 20 GEL line discount.
+Revenue is 2 * 100 - 20 = 180. Each keyboard costs 60, so line profit is 60.
+The next day one keyboard is returned: refund 90, recovered inventory cost 60.
+Profit decreases by 30, not 90, because the returned item goes back into stock.
 
-Сегодня одну клавиатуру вернули. Покупателю возвращаем 90, а не 100:
-он получил половину скидки. На склад вернулся товар стоимостью 60.
-Прибыль уменьшается на 90 − 60 = 30.
+## Raw versions and current state
 
-## Зачем сохранять raw
-
-Raw — журнал принятых версий источника. Если цена изменилась с 50 на 70,
-нам полезно видеть обе версии и знать, какой запуск принял исправление.
-В staging.latest остаётся актуальная версия. Это не отдельная копия таблицы,
-а SQL view с DISTINCT ON по ключу и сортировкой updated_at DESC.
-
-Посмотри историю продажи №2:
+Raw is the journal of accepted source versions. A price correction from 50 to 70
+keeps both versions and the run that accepted each. staging.latest selects the
+current version using DISTINCT ON and updated_at DESC.
 
 ```sql
 SELECT record_id, updated_at, payload, first_run_id
@@ -23,50 +17,44 @@ FROM raw.events WHERE entity = 'sales' AND record_id = '2'
 ORDER BY updated_at;
 ```
 
-## Что такое grain — детализация
+## Grain: what one row represents
 
-В заказе может быть несколько товаров. Поэтому количество строк продажи
-не равно количеству заказов. В демо три позиции относятся к двум заказам.
+An order can contain several products. The demo has three sales lines but two
+orders. Average order value is 260 / 2 = 130, not 260 / 3.
 
 ```sql
 SELECT count(*) AS lines, count(DISTINCT order_id) AS orders
 FROM dwh.fact_sales;
 ```
 
-Средний чек первого дня — 260 / 2 = 130. Деление на три позиции дало бы
-другую метрику: среднюю выручку позиции, а не чека.
+## How a join can double revenue
 
-## Почему JOIN может удвоить деньги
+A sales line has revenue 180. Joining two return events directly produces two
+rows containing 180 each; SUM incorrectly reports 360. mart.sales_line first
+aggregates returns to one row per line_id and then joins them to sales.
 
-У позиции продаж одна строка и выручка 180. Если к ней напрямую присоединить
-два возврата, получится две строки с выручкой 180 на каждой. SUM даст 360.
-В mart.sales_line возвраты сначала группируются до одной строки на line_id.
-После этого JOIN сохраняет детализацию продаж.
+## Safe reruns and late data
 
-## Почему повторный запуск безопасен
+A source may resend a batch after a network failure. The raw primary key and
+ON CONFLICT DO NOTHING skip existing versions. Warehouse rows update by business
+key. Compare raw counts and report totals before and after repeating day 2.
 
-Источник может прислать один пакет несколько раз: например, после сбоя сети.
-PRIMARY KEY в raw.events и ON CONFLICT DO NOTHING не дают повторно сохранить
-ту же версию. SQL-модель обновляется по бизнес-ключам. Проверь число версий
-до и после повторного запуска и сравни report.
+updated_at is the source change time; loaded_at is our ingestion time. An old
+batch can arrive after a correction, so arrival order must not decide freshness.
 
-updated_at — время изменения у источника. loaded_at — время приёма у нас.
-Их нельзя путать: старый пакет может прийти позже исправленного.
+## Transactions and recovery
 
-## Зачем транзакция
+If a return references a nonexistent sale, publishing half a batch would make
+the report inconsistent. The transaction rolls back the entire batch's raw and
+model changes, preserving the previous report. A separate audit update records
+the failure.
 
-Допустим, продажи загрузились, но возврат ссылается на несуществующую позицию.
-Нельзя публиковать половину результата. Все изменения модели и raw этого
-запуска откатываются, а предыдущий отчёт остаётся доступен.
-Статус неуспешной попытки записывается отдельно в ops.runs.
+## Interview exercises
 
-## Вопросы для себя и собеседования
+1. Why does one keyboard return reduce profit by 30 rather than 90?
+2. What happens when day2.json is loaded twice?
+3. Why cannot an old day1.json overwrite the day 3 correction?
+4. Why is missing cost an error instead of a zero expense?
+5. How do sale-date cohort reporting and financial movement-date reporting differ?
 
-1. Почему прибыль после одного возврата уменьшается на 30, а не на 90?
-2. Что произойдёт при повторном запуске day2.json?
-3. Почему старый day1.json не отменяет исправление третьего дня?
-4. Почему отсутствие себестоимости вызывает ошибку, а не даёт нулевой расход?
-5. Чем отчёт по дате продажи отличается от отчёта по дате финансового движения?
-
-Ответы проверяй не на память: найди соответствующую формулу или ограничение
-в SQL и воспроизведи сценарий на учебных данных.
+Find the corresponding SQL formula or constraint and reproduce each scenario.

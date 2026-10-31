@@ -1,44 +1,44 @@
-# Проверка первой версии — 31 октября 2026
+# First-version validation: October 31, 2026
 
-Среда: Windows, Python 3.10.9, локальный PostgreSQL 17.
-Проверки выполнены в изолированном временном кластере на loopback:55439.
-Существующие учебные базы не использовались. Тестовый сервер остановлен.
+Environment: Windows, Python 3.10.9, PostgreSQL 17. Checks used an isolated
+local cluster on loopback port 55439, without touching existing learning databases.
+The temporary server was stopped afterward.
 
-## Выполнено
+## Completed checks
 
-- `python -m unittest discover -s tests -v`: 3 теста, OK.
-- `python tests/integration.py`: 1 сквозной тест с последовательными
-  проверками и 7 сценариями отката, OK на финальной версии.
-- `python -m compileall -q retail.py tests`: без ошибок.
-- `docker compose config --quiet`: без ошибок с временной переменной пароля.
-- `git diff --check`: без ошибок в отслеживаемых изменениях.
+- python -m unittest discover -s tests -v: 3 tests passed.
+- python tests/integration.py: one end-to-end scenario with seven rollback
+  cases passed on the final implementation.
+- python -m compileall -q retail.py tests: passed.
+- docker compose config --quiet: passed with a temporary password variable.
+- git diff --check: passed for tracked changes.
 
-Интеграционный тест проверил: первый пакет, повтор, возврат, повтор возврата,
-исправление цены, позднее поступление старого пакета, будущую себестоимость,
-два возврата на одну позицию, превышение количества, отсутствующие ссылки,
-дату возврата до продажи, конфликт версий, отсутствие исторической стоимости,
-несогласованного клиента внутри заказа, восстановление после ошибок и
-распределение одной копейки между тремя частичными возвратами.
+Integration coverage: initial ingestion, reruns, returns, price corrections,
+old batches, future costs, multiple returns, excess return quantities, missing
+references, returns before sales, conflicting versions, missing historical costs,
+inconsistent customer within an order, recovery after failure and allocating
+one cent across three partial returns.
 
-## Дополнительный прогон
+## Larger smoke run
 
-Генератор: seed 42, extra_orders=10000.
+Seed 42; extra_orders=10000. Sales lines: 10,003; distinct orders: 10,002.
+Initial ingestion accepted 10,011 raw versions in approximately 1.285 seconds.
+A repeat accepted zero new versions in approximately 0.925 seconds.
+Return and correction batches each accepted one new version. Final net revenue:
+1,583,910.00 GEL; gross profit: 751,530.00 GEL.
 
-- Позиции продаж: 10 003; уникальные заказы: 10 002.
-- Первая загрузка: 10 011 новых raw-версий, около 1,285 с.
-- Повтор: 0 новых raw-версий, около 0,925 с.
-- Пакет возврата: 1 новая версия; исправление: 1 новая версия.
-- После возврата и исправления: net_revenue = 1 583 910,00 GEL,
-  gross_profit = 751 530,00 GEL.
+Timings are single local measurements around Python load(), including client
+startup, schema preparation, auditing, model refresh and SQL checks. They are
+smoke-test observations, not a load benchmark or an SLA.
 
-Время измерено один раз вокруг Python load() и включает запуск psql,
-подготовку схемы, аудит, загрузку, обновление модели и SQL-проверки.
-Это smoke-проверка на большем наборе, не нагрузочный benchmark и не SLA.
+## Not verified
 
-## Что ещё не проверено
+- Docker image build/runtime: Docker Desktop engine was not running.
+- GitHub Actions: the workflow exists locally but has not been published because
+  the current CLI authorization lacks workflow scope.
+- Power BI Desktop: no PBIX has been built; measures have not been evaluated by
+  the DAX engine.
+- Concurrent execution and abrupt process termination: dedicated tests remain
+  future work; publication uses an advisory transaction lock.
 
-- Сборка и запуск Docker-образа: Docker Desktop engine не запущен.
-- GitHub Actions: workflow создан локально, не отправлялся на GitHub.
-- Power BI Desktop: PBIX ещё не собран; DAX-меры пока не проверены движком DAX.
-- Параллельные запуски и аварийное завершение процесса: отдельные тесты
-  пока не добавлены. SQL-публикация использует advisory transaction lock.
+Documentation was subsequently translated to English; pipeline behavior was unchanged.
