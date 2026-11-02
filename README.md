@@ -10,6 +10,13 @@ PostgreSQL import; direct connector refresh has not yet been verified.
 Apache Airflow 3.3.1 orchestrates immutable file ingestion, transactional warehouse
 publication and quality checks every day at 06:00 Asia/Tbilisi.
 
+## Report preview
+
+![Retail analytics Power BI report showing revenue, profit, orders, returns and product performance](docs/images/retail-overview.png)
+
+Actual Power BI report export using the verified synthetic SQL snapshot.
+Download the [interactive PBIX](powerbi/Retail%20Analytics/Retail%20Analytics.pbix) to explore filters.
+
 ## Complete local demo: Windows / PowerShell 7
 
 With Docker Desktop running, use the helper from this repository:
