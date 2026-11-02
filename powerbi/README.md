@@ -1,6 +1,13 @@
 # Power BI Desktop setup
 
-This folder contains measure sources and setup instructions, not a finished PBIX.
+A working report is available in [Retail Analytics](Retail%20Analytics/README.md).
+Open `Retail Analytics/Retail Analytics.pbix` for the packaged report, or
+`Retail Analytics/Retail Analytics.pbip` for the source project.
+The default source is a verified synthetic SQL snapshot. See its README to switch
+`UsePostgreSQL` to true for direct database refresh. Live connector refresh has not
+yet been verified in Desktop; no database credentials are included.
+
+The following instructions also support building the model manually.
 
 1. Get data > PostgreSQL database. Docker server: 127.0.0.1:55432; database:
    retail; user: retail; password: your RETAIL_DB_PASSWORD. Use Import mode.
@@ -12,7 +19,9 @@ This folder contains measure sources and setup instructions, not a finished PBIX
    Products.product_id to product_id, Customers.customer_id to customer_id,
    Dates.date_id to event_date. Mark Dates as the date table. Leave Freshness
    disconnected; display its last_successful_load in a separate card.
-4. Add each measure in Measures.dax separately. Format money as GEL and ratios
+4. Create a dedicated Metrics table and add each measure in Measures.dax there.
+   Do not place Refunds in Movements: its refunds column has the same name under
+   Power BI's case-insensitive name rules. Format money as GEL and ratios
    as percentages.
 5. Overview page: Net Revenue, Gross Profit, Orders and Average Order Value cards;
    Net Revenue trend by Dates.date_id; Gross Profit by Products.category;

@@ -4,3 +4,7 @@
 !sql/**
 !tests/
 !tests/**
+
+!pipeline.py
+!airflow/
+!airflow/**

@@ -1,0 +1,731 @@
+{
+  "compatibilityLevel": 1606,
+  "model": {
+    "annotations": [
+      {
+        "name": "PBI_QueryOrder",
+        "value": "[\"Movements\",\"Products\",\"Customers\",\"Dates\",\"Freshness\",\"Metrics\",\"UsePostgreSQL\"]"
+      },
+      {
+        "name": "__PBI_TimeIntelligenceEnabled",
+        "value": "0"
+      },
+      {
+        "name": "PBI_ProTooling",
+        "value": "[\"DevMode\"]"
+      }
+    ],
+    "culture": "en-US",
+    "cultures": [
+      {
+        "name": "en-US",
+        "linguisticMetadata": {
+          "content": {
+            "Entities": {
+              "customers.city": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "Customers",
+                    "ConceptualProperty": "city"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "City": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "dates.date_id": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "Dates",
+                    "ConceptualProperty": "date_id"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Event date": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  },
+                  {
+                    "Date": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "metrics.average_order_value": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "Metrics",
+                    "ConceptualProperty": "Average Order Value"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Average Order Value": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "metrics.gross_profit": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "Metrics",
+                    "ConceptualProperty": "Gross Profit"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Gross Profit": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "metrics.gross_sales": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "Metrics",
+                    "ConceptualProperty": "Gross Sales"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Gross Sales": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "metrics.last_successful_load_utc": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "Metrics",
+                    "ConceptualProperty": "Last Successful Load (UTC)"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Last Successful Load (UTC)": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "metrics.net_revenue": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "Metrics",
+                    "ConceptualProperty": "Net Revenue"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Net Revenue": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "metrics.orders": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "Metrics",
+                    "ConceptualProperty": "Orders"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Orders": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "metrics.refunds": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "Metrics",
+                    "ConceptualProperty": "Refunds"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Refunds": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "products.category": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "Products",
+                    "ConceptualProperty": "category"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Category": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "products.product_name": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "Products",
+                    "ConceptualProperty": "product_name"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Product": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              }
+            },
+            "Language": "en-US",
+            "Version": "2.0.0"
+          },
+          "contentType": "json"
+        }
+      }
+    ],
+    "dataAccessOptions": {
+      "legacyRedirects": true,
+      "returnErrorValuesAsNull": true
+    },
+    "defaultPowerBIDataSourceVersion": "powerBI_V3",
+    "expressions": [
+      {
+        "name": "UsePostgreSQL",
+        "annotations": [
+          {
+            "name": "PBI_ResultType",
+            "value": "Logical"
+          }
+        ],
+        "description": "False loads the verified embedded SQL demo snapshot; true refreshes from local PostgreSQL and requires database credentials.",
+        "expression": "false meta [IsParameterQuery=true, Type=\"Logical\", IsParameterQueryRequired=true]",
+        "kind": "m",
+        "lineageTag": "19a2321e-57c4-4005-b0ab-7219483cf428"
+      }
+    ],
+    "relationships": [
+      {
+        "name": "d33b3441-d276-4ebc-9dc5-2d76bc322e1f",
+        "fromColumn": "product_id",
+        "fromTable": "Movements",
+        "toColumn": "product_id",
+        "toTable": "Products"
+      },
+      {
+        "name": "6a597747-78ff-4625-913e-03edafdf6bd3",
+        "fromColumn": "customer_id",
+        "fromTable": "Movements",
+        "toColumn": "customer_id",
+        "toTable": "Customers"
+      },
+      {
+        "name": "a152c819-bf61-4df1-8aa0-710d322f8d1a",
+        "fromColumn": "event_date",
+        "fromTable": "Movements",
+        "toColumn": "date_id",
+        "toTable": "Dates"
+      }
+    ],
+    "sourceQueryCulture": "en-US",
+    "tables": [
+      {
+        "name": "Movements",
+        "columns": [
+          {
+            "name": "movement_id",
+            "dataType": "string",
+            "isHidden": true,
+            "lineageTag": "d1cc894c-a165-4688-bd29-57d20cb301e8",
+            "sourceColumn": "movement_id",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "event_date",
+            "dataType": "dateTime",
+            "formatString": "yyyy-MM-dd",
+            "lineageTag": "a007fc14-4a87-40fe-a1cc-d31d8724f063",
+            "sourceColumn": "event_date",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "order_id",
+            "dataType": "int64",
+            "isHidden": true,
+            "lineageTag": "b0931383-e85c-4de2-86db-0804c64e0fac",
+            "sourceColumn": "order_id",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "customer_id",
+            "dataType": "int64",
+            "isHidden": true,
+            "lineageTag": "c5a9d12a-822a-4a6f-963f-1a1007f6b823",
+            "sourceColumn": "customer_id",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "product_id",
+            "dataType": "int64",
+            "isHidden": true,
+            "lineageTag": "317e6646-ba7c-4b05-8aa5-e13a8a5fec47",
+            "sourceColumn": "product_id",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "sold_units",
+            "dataType": "int64",
+            "lineageTag": "c59c0e5b-02d5-4e52-a146-6dbf9393b18e",
+            "sourceColumn": "sold_units",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "returned_units",
+            "dataType": "int64",
+            "lineageTag": "fcff1c00-c49b-4a44-8d90-52bc36069042",
+            "sourceColumn": "returned_units",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "revenue",
+            "dataType": "decimal",
+            "formatString": "\"GEL \"#,0.00;\"GEL \"-#,0.00;\"GEL \"0.00",
+            "lineageTag": "a57c069e-47bd-418d-adc9-d164ff371ce7",
+            "sourceColumn": "revenue",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "refunds",
+            "dataType": "decimal",
+            "formatString": "\"GEL \"#,0.00;\"GEL \"-#,0.00;\"GEL \"0.00",
+            "lineageTag": "037d7519-119f-46aa-8745-4f1d81700de3",
+            "sourceColumn": "refunds",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "cogs",
+            "dataType": "decimal",
+            "formatString": "\"GEL \"#,0.00;\"GEL \"-#,0.00;\"GEL \"0.00",
+            "lineageTag": "984e9b61-1f1b-4820-a6cd-0b3be9df2db9",
+            "sourceColumn": "cogs",
+            "summarizeBy": "none"
+          }
+        ],
+        "lineageTag": "0d2fc869-b271-4580-a90a-ed77da57043d",
+        "partitions": [
+          {
+            "name": "Movements",
+            "mode": "import",
+            "source": {
+              "expression": [
+                "let",
+                "    Snapshot = #table({\"movement_id\", \"event_date\", \"order_id\", \"customer_id\", \"product_id\", \"sold_units\", \"returned_units\", \"revenue\", \"refunds\", \"cogs\"}, {",
+                "        {\"sale:1\", #datetime(2026,1,1,0,0,0), 1, 1, 1, 2, 0, 180.0, 0, 120.0},",
+                "        {\"sale:2\", #datetime(2026,1,1,0,0,0), 1, 1, 2, 1, 0, 70.0, 0, 20.0},",
+                "        {\"sale:3\", #datetime(2026,1,1,0,0,0), 2, 2, 3, 3, 0, 30.0, 0, 12.0},",
+                "        {\"return:1\", #datetime(2026,1,2,0,0,0), 1, 1, 1, 0, 1, 0, 90.0, -60.0}",
+                "    }),",
+                "    Source = if UsePostgreSQL then PostgreSQL.Database(\"127.0.0.1:55432\", \"retail\", [CreateNavigationProperties=false]){[Schema=\"mart\",Item=\"movements\"]}[Data] else Snapshot,",
+                "    Typed = Table.TransformColumnTypes(Source, {{\"movement_id\", type text}, {\"event_date\", type datetime}, {\"order_id\", Int64.Type}, {\"customer_id\", Int64.Type}, {\"product_id\", Int64.Type}, {\"sold_units\", Int64.Type}, {\"returned_units\", Int64.Type}, {\"revenue\", Currency.Type}, {\"refunds\", Currency.Type}, {\"cogs\", Currency.Type}})",
+                "in",
+                "    Typed"
+              ],
+              "type": "m"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Products",
+        "columns": [
+          {
+            "name": "product_id",
+            "dataType": "int64",
+            "isHidden": true,
+            "lineageTag": "fc1c4323-709a-44c6-a9e9-8eb8c566a316",
+            "sourceColumn": "product_id",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "product_name",
+            "dataType": "string",
+            "lineageTag": "6c65ff43-2ea7-42a4-8299-d5843fbafd47",
+            "sourceColumn": "product_name",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "category",
+            "dataType": "string",
+            "lineageTag": "da6916a2-edc4-4411-a17f-8fae49edf990",
+            "sourceColumn": "category",
+            "summarizeBy": "none"
+          }
+        ],
+        "lineageTag": "6cacd1aa-6c6f-4a7a-812d-01ebfd21bfe8",
+        "partitions": [
+          {
+            "name": "Products",
+            "mode": "import",
+            "source": {
+              "expression": [
+                "let",
+                "    Snapshot = #table({\"product_id\", \"product_name\", \"category\"}, {",
+                "        {1, \"Keyboard\", \"Electronics\"},",
+                "        {2, \"Mouse\", \"Electronics\"},",
+                "        {3, \"Notebook\", \"Stationery\"}",
+                "    }),",
+                "    Source = if UsePostgreSQL then PostgreSQL.Database(\"127.0.0.1:55432\", \"retail\", [CreateNavigationProperties=false]){[Schema=\"dwh\",Item=\"dim_product\"]}[Data] else Snapshot,",
+                "    Typed = Table.TransformColumnTypes(Source, {{\"product_id\", Int64.Type}, {\"product_name\", type text}, {\"category\", type text}})",
+                "in",
+                "    Typed"
+              ],
+              "type": "m"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Customers",
+        "columns": [
+          {
+            "name": "customer_id",
+            "dataType": "int64",
+            "isHidden": true,
+            "lineageTag": "25a31976-09b2-40a1-a8df-680837eb7604",
+            "sourceColumn": "customer_id",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "city",
+            "dataType": "string",
+            "lineageTag": "5ed683ff-4425-4d89-9d3b-1c65e1ac6822",
+            "sourceColumn": "city",
+            "summarizeBy": "none"
+          }
+        ],
+        "lineageTag": "2d776834-b621-4fc3-a4b8-763c58e266f4",
+        "partitions": [
+          {
+            "name": "Customers",
+            "mode": "import",
+            "source": {
+              "expression": [
+                "let",
+                "    Snapshot = #table({\"customer_id\", \"city\"}, {",
+                "        {1, \"Tbilisi\"},",
+                "        {2, \"Batumi\"}",
+                "    }),",
+                "    Source = if UsePostgreSQL then PostgreSQL.Database(\"127.0.0.1:55432\", \"retail\", [CreateNavigationProperties=false]){[Schema=\"dwh\",Item=\"dim_customer\"]}[Data] else Snapshot,",
+                "    Typed = Table.TransformColumnTypes(Source, {{\"customer_id\", Int64.Type}, {\"city\", type text}})",
+                "in",
+                "    Typed"
+              ],
+              "type": "m"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Dates",
+        "columns": [
+          {
+            "name": "date_id",
+            "dataCategory": "PaddedDateTableDates",
+            "dataType": "dateTime",
+            "formatString": "yyyy-MM-dd",
+            "isKey": true,
+            "lineageTag": "47b857dc-e512-48cc-ab5e-92b0f2ae379d",
+            "sourceColumn": "date_id",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "year",
+            "dataType": "int64",
+            "lineageTag": "9511b857-394f-43ab-a22b-d434b05cf0bc",
+            "sourceColumn": "year",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "month",
+            "dataType": "int64",
+            "lineageTag": "453dc7fa-90cc-4cf8-874b-9064b31d95cb",
+            "sourceColumn": "month",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "month_start",
+            "dataType": "dateTime",
+            "formatString": "yyyy-MM-dd",
+            "lineageTag": "06e383fb-5587-4d47-b998-43914bf79023",
+            "sourceColumn": "month_start",
+            "summarizeBy": "none"
+          }
+        ],
+        "dataCategory": "Time",
+        "lineageTag": "f88339be-e6a3-4d66-9cdc-8e004bd19565",
+        "partitions": [
+          {
+            "name": "Dates",
+            "mode": "import",
+            "source": {
+              "expression": [
+                "let",
+                "    Snapshot = #table({\"date_id\", \"year\", \"month\", \"month_start\"}, {",
+                "        {#datetime(2026,1,1,0,0,0), 2026, 1, #datetime(2026,1,1,0,0,0)},",
+                "        {#datetime(2026,1,2,0,0,0), 2026, 1, #datetime(2026,1,1,0,0,0)}",
+                "    }),",
+                "    Source = if UsePostgreSQL then PostgreSQL.Database(\"127.0.0.1:55432\", \"retail\", [CreateNavigationProperties=false]){[Schema=\"dwh\",Item=\"dim_date\"]}[Data] else Snapshot,",
+                "    Typed = Table.TransformColumnTypes(Source, {{\"date_id\", type datetime}, {\"year\", Int64.Type}, {\"month\", Int64.Type}, {\"month_start\", type datetime}})",
+                "in",
+                "    Typed"
+              ],
+              "type": "m"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Freshness",
+        "columns": [
+          {
+            "name": "last_successful_load",
+            "dataType": "dateTime",
+            "formatString": "yyyy-MM-dd HH:mm",
+            "lineageTag": "6b8c1d0c-6714-4bea-80d9-db38a0ce4e2d",
+            "sourceColumn": "last_successful_load",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "latest_source_update",
+            "dataType": "dateTime",
+            "formatString": "yyyy-MM-dd HH:mm",
+            "lineageTag": "78ca1928-ace8-43ea-af86-12b8897dc3eb",
+            "sourceColumn": "latest_source_update",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "failed_runs",
+            "dataType": "int64",
+            "lineageTag": "de0897a0-7a35-4acc-916a-4c6e9d58e1df",
+            "sourceColumn": "failed_runs",
+            "summarizeBy": "none"
+          }
+        ],
+        "lineageTag": "1ce271ce-9784-439a-8773-12a35e14df91",
+        "partitions": [
+          {
+            "name": "Freshness",
+            "mode": "import",
+            "source": {
+              "expression": [
+                "let",
+                "    Snapshot = #table({\"last_successful_load\", \"latest_source_update\", \"failed_runs\"}, {",
+                "        {#datetime(2026,11,2,16,28,54), #datetime(2026,1,3,12,0,0), 0}",
+                "    }),",
+                "    Source = if UsePostgreSQL then PostgreSQL.Database(\"127.0.0.1:55432\", \"retail\", [CreateNavigationProperties=false]){[Schema=\"mart\",Item=\"freshness\"]}[Data] else Snapshot,",
+                "    Typed = Table.TransformColumnTypes(Source, {{\"last_successful_load\", type datetime}, {\"latest_source_update\", type datetime}, {\"failed_runs\", Int64.Type}})",
+                "in",
+                "    Typed"
+              ],
+              "type": "m"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Metrics",
+        "columns": [
+          {
+            "name": "_anchor",
+            "dataType": "int64",
+            "isHidden": true,
+            "lineageTag": "b02b644a-d4e4-45e8-b6de-d447ac8f640e",
+            "sourceColumn": "_anchor"
+          }
+        ],
+        "lineageTag": "ed91c065-1290-43d5-8232-530a6f221b12",
+        "measures": [
+          {
+            "name": "Gross Sales",
+            "displayFolder": "Performance",
+            "expression": "SUM(Movements[revenue])",
+            "formatString": "\"GEL \"#,0.00;\"GEL \"-#,0.00;\"GEL \"0.00",
+            "lineageTag": "905efeaa-24a6-4f9a-bdf4-9c03a04ecf6c"
+          },
+          {
+            "name": "Refunds",
+            "displayFolder": "Performance",
+            "expression": "SUM(Movements[refunds])",
+            "formatString": "\"GEL \"#,0.00;\"GEL \"-#,0.00;\"GEL \"0.00",
+            "lineageTag": "ab542daf-527d-4e4d-87b4-a756d5ac9d15"
+          },
+          {
+            "name": "Net Revenue",
+            "displayFolder": "Performance",
+            "expression": "[Gross Sales] - [Refunds]",
+            "formatString": "\"GEL \"#,0.00;\"GEL \"-#,0.00;\"GEL \"0.00",
+            "lineageTag": "158be05d-9f05-4230-ac33-0d327265c33a"
+          },
+          {
+            "name": "Net COGS",
+            "displayFolder": "Performance",
+            "expression": "SUM(Movements[cogs])",
+            "formatString": "\"GEL \"#,0.00;\"GEL \"-#,0.00;\"GEL \"0.00",
+            "lineageTag": "4bde5255-ba29-40b6-adf3-dd81a5c5005d"
+          },
+          {
+            "name": "Gross Profit",
+            "displayFolder": "Performance",
+            "expression": "[Net Revenue] - [Net COGS]",
+            "formatString": "\"GEL \"#,0.00;\"GEL \"-#,0.00;\"GEL \"0.00",
+            "lineageTag": "e23a0786-d869-449f-8185-5e8b860bca54"
+          },
+          {
+            "name": "Gross Margin",
+            "displayFolder": "Ratios",
+            "expression": "DIVIDE([Gross Profit], [Net Revenue])",
+            "formatString": "0.0%",
+            "lineageTag": "e956e4f1-d89d-4df1-a660-cdc5ebee70ad"
+          },
+          {
+            "name": "Orders",
+            "displayFolder": "Performance",
+            "expression": "CALCULATE(DISTINCTCOUNT(Movements[order_id]), Movements[sold_units] > 0)",
+            "formatString": "#,0",
+            "lineageTag": "524297ac-93fa-4bf2-a17f-e1b7ec06a2f8"
+          },
+          {
+            "name": "Average Order Value",
+            "displayFolder": "Performance",
+            "expression": "DIVIDE([Gross Sales], [Orders])",
+            "formatString": "\"GEL \"#,0.00;\"GEL \"-#,0.00;\"GEL \"0.00",
+            "lineageTag": "4d45a35e-25dc-4cc6-85c1-4da02a7a3a4e"
+          },
+          {
+            "name": "Sold Units",
+            "displayFolder": "Performance",
+            "expression": "SUM(Movements[sold_units])",
+            "formatString": "#,0",
+            "lineageTag": "6a4634d8-66c3-4adb-b935-6c04fe49c292"
+          },
+          {
+            "name": "Returned Units",
+            "displayFolder": "Performance",
+            "expression": "SUM(Movements[returned_units])",
+            "formatString": "#,0",
+            "lineageTag": "106edfe1-9c24-4d20-b924-5808b59ca1bb"
+          },
+          {
+            "name": "Period Return Unit Ratio",
+            "displayFolder": "Ratios",
+            "expression": "DIVIDE([Returned Units], [Sold Units])",
+            "formatString": "0.0%",
+            "lineageTag": "4f766c6d-2d6b-4ffb-93e7-3393319ca125"
+          },
+          {
+            "name": "Last Successful Load (UTC)",
+            "expression": "FORMAT(MAX(Freshness[last_successful_load]), \"yyyy-MM-dd HH:mm\")",
+            "lineageTag": "91b414ae-14a5-4660-a3c0-c1bf6c382b8a"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Metrics",
+            "mode": "import",
+            "source": {
+              "expression": "#table(type table [_anchor = Int64.Type], {{1}})",
+              "type": "m"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

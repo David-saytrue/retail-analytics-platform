@@ -1,9 +1,56 @@
 # Retail Analytics Platform
 
+[![Retail analytics checks](https://github.com/David-saytrue/retail-analytics-platform/actions/workflows/ci.yml/badge.svg)](https://github.com/David-saytrue/retail-analytics-platform/actions/workflows/ci.yml)
+
 An end-to-end Data Engineering / BI portfolio project using synthetic retail data.
 Python ingests sales and returns into PostgreSQL; SQL builds a warehouse and
-validated financial marts. Power BI measure sources are included; a finished
-PBIX report and Airflow scheduling are not implemented yet.
+validated financial marts. A working Power BI report and editable project are included in [powerbi](powerbi/README.md).
+The report defaults to a verified synthetic SQL snapshot and supports switching to
+PostgreSQL import; direct connector refresh has not yet been verified.
+Apache Airflow 3.3.1 orchestrates immutable file ingestion, transactional warehouse
+publication and quality checks every day at 06:00 Asia/Tbilisi.
+
+## Complete local demo: Windows / PowerShell 7
+
+With Docker Desktop running, use the helper from this repository:
+
+```powershell
+./scripts/retail.ps1 -Action Start
+./scripts/retail.ps1 -Action PrepareDemo
+./scripts/retail.ps1 -Action Trigger
+./scripts/retail.ps1 -Action Status
+./scripts/retail.ps1 -Action CopyAirflowPassword
+```
+
+Open [local Airflow](http://localhost:8086) as `admin` and paste the copied password.
+The helper preserves database credentials in ignored, Windows-user-encrypted local
+storage. It will not invent new passwords for existing database volumes.
+Read the [Airflow runbook](airflow/README.md) for setup, input contracts, retries,
+failure recovery and other operating systems.
+
+Open [Retail Analytics.pbix](powerbi/Retail%20Analytics/Retail%20Analytics.pbix)
+in Power BI Desktop. [Editable PBIP source](powerbi/Retail%20Analytics/Retail%20Analytics.pbip)
+is included beside it. The verified embedded SQL snapshot shows net revenue **190 GEL**,
+gross profit **98 GEL**, **2 orders** and average order value **140 GEL**.
+Its PostgreSQL source switch is prepared; direct connector refresh still requires
+local credentials and has not been verified. Airflow does not refresh the PBIX.
+
+The application database is available at `127.0.0.1:55432`; Airflow uses a separate
+metadata database. Other Compose projects are not part of this deployment.
+Stop only this stack without deleting data using `./scripts/retail.ps1 -Action Stop`.
+
+## What the project demonstrates
+
+- Python validates synthetic source data before publishing it to PostgreSQL.
+- Raw versions preserve updates; staging selects source-time latest values.
+- A star schema and financial marts handle historical costs and partial returns.
+- Airflow polls immutable SHA-256-verified packages and retries safely.
+- A packaged Power BI report explores sales, refunds, margins, cities and categories.
+- CI verifies Python behavior, PostgreSQL rollback/replay and the actual Airflow DAG.
+
+The minimal commands below are an alternative manual setup. Reuse the original
+database password if a volume already exists; changing an environment variable
+does not change the stored PostgreSQL password.
 
 ## Quick start: Docker and PowerShell
 
@@ -118,11 +165,14 @@ SQL validates references, quantities, source reconciliation and order consistenc
 
 Raw ingestion is incremental; the SQL model currently refreshes from all latest
 versions. This is not an optimized million-row pipeline. Abrupt termination can
-leave a running audit entry. Stale-run detection, scheduling, deletion handling,
-schema migrations and concurrent-run tests remain future work.
+leave a running audit entry. Stale-run detection, deletion handling, schema migrations
+and concurrent-run tests remain future work. Airflow scheduling is implemented as a
+local standalone deployment; production HA and external notifications are not configured.
+Ready packages are retained and replayed rather than tracked in an optimized file catalog.
+Transactions are atomic per package, not for an entire multi-package DAG run.
 
 The [CI workflow](.github/workflows/ci.yml) runs unit tests and the end-to-end
-PostgreSQL scenario on push and pull request. It also supports manual runs.
+PostgreSQL scenarios plus DAG import in the pinned Airflow image on push and pull request. It also supports manual runs.
 See [GitHub Actions](https://github.com/David-saytrue/retail-analytics-platform/actions)
 for the latest execution status.
 
@@ -130,9 +180,12 @@ for the latest execution status.
 
 1. Read [Lesson 1](docs/lesson-01.md), run the demo and explain each result.
 2. Inspect raw.events, staging.latest, dwh tables and mart views in DBeaver.
-3. Build the report following [Power BI setup](powerbi/README.md), reconciling it
-   against the SQL results.
-4. Extend with Airflow, monitoring, scaling and a short demo video.
+3. Open the [Power BI report](powerbi/README.md), explain its measures and reconcile
+   both all-period and filtered results against SQL.
+4. Follow the [Airflow runbook](airflow/README.md), inspect successful tasks and explain
+   how checksums, retries, transactions and quarantine handle failed input.
+5. Optional extensions: a real external source, PostgreSQL-connected report refresh,
+   monitoring/alerts, scaling and a short demo video.
 
 Official references: [psql](https://www.postgresql.org/docs/17/app-psql.html),
 [ON CONFLICT](https://www.postgresql.org/docs/17/sql-insert.html),

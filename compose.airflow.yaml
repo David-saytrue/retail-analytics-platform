@@ -1,0 +1,61 @@
+# Local portfolio deployment. Keep the UI bound to loopback.
+services:
+  airflow-db:
+    image: postgres:17-bookworm
+    profiles: [airflow]
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: ${AIRFLOW_DB_PASSWORD:?Set a URL-safe AIRFLOW_DB_PASSWORD}
+      POSTGRES_DB: airflow
+    volumes:
+      - airflow-db:/var/lib/postgresql/data
+    healthcheck:
+      test: [CMD-SHELL, pg_isready -U airflow -d airflow]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+  airflow:
+    build:
+      context: .
+      dockerfile: airflow/Dockerfile
+    profiles: [airflow]
+    command: standalone
+    environment:
+      AIRFLOW_HOME: /opt/airflow/state
+      AIRFLOW__CORE__DAGS_FOLDER: /opt/airflow/dags
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
+      AIRFLOW__CORE__PARALLELISM: '2'
+      AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'true'
+      AIRFLOW__CORE__SIMPLE_AUTH_MANAGER_USERS: admin:admin
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:${AIRFLOW_DB_PASSWORD}@airflow-db:5432/airflow
+      AIRFLOW__CORE__EXECUTION_API_SERVER_URL: http://localhost:8080/execution/
+      AIRFLOW__API__BASE_URL: http://localhost:8086
+      AIRFLOW__SCHEDULER__ENABLE_HEALTH_CHECK: 'true'
+      PGHOST: db
+      PGPORT: '5432'
+      PGDATABASE: retail
+      PGUSER: retail
+      PGPASSWORD: ${RETAIL_DB_PASSWORD:?Set RETAIL_DB_PASSWORD}
+      RETAIL_INBOX: /opt/retail/data/inbox
+      RETAIL_REPORTS: /opt/retail/data/reports
+    ports:
+      - '127.0.0.1:8086:8080'
+    volumes:
+      - airflow-state:/opt/airflow/state
+      - ./data:/opt/retail/data
+    depends_on:
+      db:
+        condition: service_healthy
+      airflow-db:
+        condition: service_healthy
+    healthcheck:
+      test: [CMD-SHELL, 'curl --fail --silent http://localhost:8974/health >/dev/null']
+      interval: 10s
+      timeout: 5s
+      start_period: 90s
+      retries: 18
+    restart: unless-stopped
+volumes:
+  airflow-db:
+  airflow-state:

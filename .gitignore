@@ -7,3 +7,11 @@ data/generated/
 *.pem
 *.key
 artifacts/
+
+# Power BI local state and imported model cache
+**/.pbi/localSettings.json
+**/.pbi/cache.abf
+
+# Local immutable inboxes and run artifacts
+data/inbox/
+data/reports/

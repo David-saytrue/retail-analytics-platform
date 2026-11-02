@@ -1,5 +1,6 @@
 // Table name after import: Movements. Currency: GEL.
-// Add each definition as a separate measure in Power BI Desktop.
+// Add each definition to a dedicated Metrics table in Power BI Desktop.
+// Refunds cannot share Movements with the case-insensitively equal refunds column.
 Gross Sales = SUM(Movements[revenue])
 
 Refunds = SUM(Movements[refunds])
